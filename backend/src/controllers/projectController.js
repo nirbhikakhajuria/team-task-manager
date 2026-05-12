@@ -1,6 +1,6 @@
 const { Project, User, ProjectMember, Task } = require('../models');
 
-// Create a new project (admin only)
+// Create a new project 
 exports.createProject = async (req, res) => {
   try {
     const { name, description } = req.body;
