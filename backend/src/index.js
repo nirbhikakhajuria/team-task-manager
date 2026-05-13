@@ -1,13 +1,16 @@
 const express = require("express");
 const cors = require("cors");
-require("dotenv").config();
+
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 
 const sequelize = require("./config/database");
 require("./models");
 
 const authRoutes = require("./routes/auth");
-const projectRoutes = require('./routes/projects');  
-const taskRoutes = require('./routes/tasks');         
+const projectRoutes = require("./routes/projects");
+const taskRoutes = require("./routes/tasks");
 
 const app = express();
 
@@ -18,14 +21,19 @@ app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/tasks", taskRoutes);
 
-app.get("/", (req, res) => res.json({ message: "API is running" }));
+app.get("/", (req, res) => {
+  res.json({ message: "API is running" });
+});
 
 const PORT = process.env.PORT || 5000;
 
+// 🚀 START SERVER IMMEDIATELY (IMPORTANT)
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+// 🔄 THEN CONNECT DB
 sequelize
   .sync({ alter: true })
-  .then(() => {
-    console.log("Database synced");
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  })
+  .then(() => console.log("Database synced"))
   .catch((err) => console.error("DB sync error:", err));
